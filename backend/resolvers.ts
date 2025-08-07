@@ -1,8 +1,9 @@
 import { calculateMemberFee } from './pricingService';
 
-// In-memory storage for study clubs. In a production environment this
-// would be replaced with calls to a database (e.g. DynamoDB or Aurora).
+// In-memory storage for study clubs and events. In a production environment
+// these would be replaced with calls to a database (e.g. DynamoDB or Aurora).
 const clubs: any[] = [];
+const events: any[] = [];
 
 export const resolvers = {
   Query: {
@@ -11,6 +12,9 @@ export const resolvers = {
     },
     listClubs: async () => {
       return clubs;
+    },
+    listEvents: async (_: any, args: { clubId: string }) => {
+      return events.filter((event) => event.clubId === args.clubId);
     },
   },
   Mutation: {
@@ -42,6 +46,42 @@ export const resolvers = {
         club.memberFee = memberFee;
       }
       return club;
+    },
+    createEvent: async (_: any, args: { clubId: string; name: string; startDate: string; endDate: string; location?: string; description?: string; moduleId?: string }) => {
+      const { clubId, name, startDate, endDate, location, description, moduleId } = args;
+      const event = {
+        id: Date.now().toString(),
+        clubId,
+        name,
+        startDate,
+        endDate,
+        location,
+        description,
+        moduleId,
+        createdAt: new Date().toISOString(),
+      };
+      events.push(event);
+      return event;
+    },
+    updateEvent: async (_: any, args: { id: string; name?: string; startDate?: string; endDate?: string; location?: string; description?: string; moduleId?: string }) => {
+      const { id, name, startDate, endDate, location, description, moduleId } = args;
+      const index = events.findIndex((e) => e.id === id);
+      if (index < 0) return null;
+      const event = events[index];
+      if (name !== undefined) event.name = name;
+      if (startDate !== undefined) event.startDate = startDate;
+      if (endDate !== undefined) event.endDate = endDate;
+      if (location !== undefined) event.location = location;
+      if (description !== undefined) event.description = description;
+      if (moduleId !== undefined) event.moduleId = moduleId;
+      return event;
+    },
+    deleteEvent: async (_: any, args: { id: string }) => {
+      const { id } = args;
+      const index = events.findIndex((e) => e.id === id);
+      if (index < 0) return false;
+      events.splice(index, 1);
+      return true;
     },
   },
 };
