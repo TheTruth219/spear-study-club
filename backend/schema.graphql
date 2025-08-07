@@ -24,4 +24,29 @@ type Query {
 type Mutation {
   createClub(name: String!, tier: Int!, seats: Int!, leaderContribution: Float!): Club
   updateClub(id: ID!, tier: Int, seats: Int, leaderContribution: Float): Club
+
+
+# Event type for study club meetings
+
+type Event {
+  id: ID!
+  clubId: ID!
+  name: String!
+  startDate: AWSDateTime!
+  endDate: AWSDateTime!
+  location: String
+  description: String
+  moduleId: ID
+  createdAt: AWSDateTime!
+}
+
+extend type Query {
+  listEvents(clubId: ID!): [Event!]!
+}
+
+extend type Mutation {
+  createEvent(clubId: ID!, name: String!, startDate: AWSDateTime!, endDate: AWSDateTime!, location: String, description: String, moduleId: ID): Event
+  updateEvent(id: ID!, name: String, startDate: AWSDateTime, endDate: AWSDateTime, location: String, description: String, moduleId: ID): Event
+  deleteEvent(id: ID!): Boolean
+}
 }
