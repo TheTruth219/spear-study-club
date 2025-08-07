@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from
+  import ClubForm from './components/ClubForm';
 
 // Determine the base monthly price based on the number of seats.  In the prototype,
 // seats between 8 and 11 cost $2,000/month, 12–15 cost $2,400/month and 16–18 cost $2,700/month.
@@ -64,7 +65,10 @@ const App: React.FC = () => {
           <p className="text-lg font-semibold">Monthly member fee:</p>
           <p className="text-2xl font-bold">${memberFee.toFixed(2)}</p>
         </div>
-      </div>
+      
+              <div className="mt-8">
+          <ClubForm />
+        </div>
     </div>
   );
 };
