@@ -1,0 +1,27 @@
+type Club {
+  id: ID!
+  name: String!
+  tier: Int!
+  seats: Int!
+  leaderContribution: Float!
+  memberFee: Float!
+  createdAt: AWSDateTime!
+}
+
+type Member {
+  id: ID!
+  clubId: ID!
+  name: String!
+  email: String!
+  joinedAt: AWSDateTime!
+}
+
+type Query {
+  getClub(id: ID!): Club
+  listClubs: [Club!]!
+}
+
+type Mutation {
+  createClub(name: String!, tier: Int!, seats: Int!, leaderContribution: Float!): Club
+  updateClub(id: ID!, tier: Int, seats: Int, leaderContribution: Float): Club
+}
