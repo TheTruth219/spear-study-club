@@ -1,41 +1,37 @@
-import React, { useState } from
-  import ClubForm from './components/ClubForm';
+import React, { useState } from 'react';
+import ClubForm from './components/ClubForm';
 import EventForm from './components/EventForm';
-
-// Determine the base monthly price based on the number of seats.  In the prototype,
-// seats between 8 and 11 cost $2,000/month, 12–15 cost $2,400/month and 16–18 cost $2,700/month.
-const getBasePrice = (seats: number) => {
-  if (seats >= 8 && seats <= 11) {
-    return 2000;
-  } else if (seats >= 12 && seats <= 15) {
-    return 2400;
-  } else {
-    return 2700;
-  }
-};
+import ClubList from './components/ClubList';
+import EventList from './components/EventList';
 
 const App: React.FC = () => {
-  // Seat count state (8–18)
   const [seats, setSeats] = useState(8);
-  const basePrice = getBasePrice(seats);
-  // Leader contribution state (0–basePrice)
-  const [contribution, setContribution] = useState(0);
+  const [leaderContribution, setLeaderContribution] = useState(0);
 
-  // Calculate the monthly fee per member
-  const memberFee = (basePrice - contribution) / seats;
+  const getBasePrice = (seats: number) => {
+    if (seats <= 11) {
+      return 2000;
+    } else if (seats <= 15) {
+      return 2400;
+    } else {
+      return 2700;
+    }
+  };
+
+  const calculateMemberFee = () => {
+    const basePrice = getBasePrice(seats);
+    return ((basePrice - leaderContribution) / seats).toFixed(2);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center justify-start">
-      <h1 className="text-3xl font-bold mb-6">Spear Study Club Pricing</h1>
-
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow">
-        {/* Seat selection slider */}
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center">
+      <div className="max-w-3xl w-full mt-10 bg-white p-8 rounded shadow-md">
+        <h1 className="text-2xl font-bold mb-4">Spear Study Club Pricing</h1>
         <div className="mb-4">
-          <label htmlFor="seats" className="block mb-2 font-semibold">
+          <label className="block mb-2 font-medium">
             Number of seats: {seats}
           </label>
           <input
-            id="seats"
             type="range"
             min={8}
             max={18}
@@ -44,39 +40,40 @@ const App: React.FC = () => {
             className="w-full"
           />
         </div>
-
-        {/* Leader contribution slider */}
         <div className="mb-4">
-          <label htmlFor="contribution" className="block mb-2 font-semibold">
-            Leader contribution: ${contribution.toFixed(0)} / ${basePrice}
+          <label className="block mb-2 font-medium">
+            Leader contribution: ${leaderContribution}
           </label>
           <input
-            id="contribution"
             type="range"
             min={0}
-            max={basePrice}
-            value={contribution}
-            onChange={(e) => setContribution(parseInt(e.target.value))}
+            max={getBasePrice(seats)}
+            step={100}
+            value={leaderContribution}
+            onChange={(e) => setLeaderContribution(parseInt(e.target.value))}
             className="w-full"
           />
         </div>
-
-        {/* Computed member fee */}
-        <div className="p-4 bg-blue-50 rounded">
-          <p className="text-lg font-semibold">Monthly member fee:</p>
-          <p className="text-2xl font-bold">${memberFee.toFixed(2)}</p>
-        </div>
-
-     
-
-                <div className="mt-8">
-          <ClubForm />
+        <div className="mb-4">
+          <p className="font-medium">
+            Member fee: ${calculateMemberFee()} per month
+          </p>
         </div>
         <div className="mt-8">
-                );
-    };
-
+         <ClubForm />
+        </div>
+      <div className="mt-8">
           <EventForm />
         </div>
+      <div className="mt-8">
+          <ClubList />
+        </div>
+        <div className="mt-8">
+          <EventList />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default App;
